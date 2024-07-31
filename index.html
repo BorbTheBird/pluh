@@ -39,26 +39,21 @@
         const pitchValue = document.getElementById('pitch-value');
         const speedValue = document.getElementById('speed-value');
 
+        // Initialize Web Audio API components
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const source = audioContext.createMediaElementSource(audio);
-        const pitchShift = audioContext.createBufferSource();
-        const playbackRate = audioContext.createGain();
-        
-        source.connect(playbackRate);
-        playbackRate.connect(audioContext.destination);
+        const gainNode = audioContext.createGain();
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
 
         function updateAudio() {
             const pitch = pitchSlider.value;
             const speed = speedSlider.value;
 
-            // Adjust playback rate (speed)
-            playbackRate.gain.value = speed;
+            // Adjust playbackRate (speed and pitch together)
+            audio.playbackRate = speed;
 
-            // Adjust pitch
-            // Note: This code only adjusts pitch relative to speed, and actual pitch shifting requires more advanced processing.
-            source.playbackRate.value = pitch;
-
-            // Update displayed values
+            // Display updated values
             pitchValue.textContent = pitch;
             speedValue.textContent = speed;
         }
