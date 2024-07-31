@@ -39,6 +39,7 @@
         let playbackRateControl;
         let audioLoaded = false;
         let audioContextStarted = false;
+        let isPlaying = false;
 
         document.getElementById('start').addEventListener('click', async () => {
             try {
@@ -65,11 +66,10 @@
                     setupAudioNodes();
                 }
 
-                // Start playback
-                if (audioLoaded) {
+                // Start playback if not already playing
+                if (audioLoaded && !isPlaying) {
                     player.start();
-                } else {
-                    console.warn('Audio not loaded yet.');
+                    isPlaying = true;
                 }
 
             } catch (err) {
@@ -79,11 +79,15 @@
 
         function setupAudioNodes() {
             // Create pitch shift and playback rate nodes
-            pitchShift = new Tone.PitchShift().toDestination();
-            playbackRateControl = new Tone.Gain().toDestination();
+            if (!pitchShift) pitchShift = new Tone.PitchShift().toDestination();
+            if (!playbackRateControl) playbackRateControl = new Tone.Gain().toDestination();
 
-            player.connect(pitchShift);
-            pitchShift.connect(playbackRateControl);
+            // Ensure player is connected correctly
+            if (player) {
+                player.disconnect();
+                player.connect(pitchShift);
+                pitchShift.connect(playbackRateControl);
+            }
 
             // Setup sliders
             const pitchSlider = document.getElementById('pitch');
@@ -96,8 +100,8 @@
                 const speed = speedSlider.value;
 
                 // Update pitch and speed
-                pitchShift.pitch = parseFloat(pitch);
-                playbackRateControl.gain.value = parseFloat(speed);
+                if (pitchShift) pitchShift.pitch = parseFloat(pitch);
+                if (playbackRateControl) playbackRateControl.gain.value = parseFloat(speed);
 
                 // Update displayed values
                 pitchValue.textContent = pitch;
