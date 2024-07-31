@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Controls</title>
+    <title>Audio Controls with Tone.js</title>
     <style>
         .slider-container {
             margin: 20px 0;
@@ -18,7 +18,7 @@
     <img src="pluh.jpg" alt="Pluh" />
     <p>Look at him, he's so pluh</p>
 
-    <audio id="audio" src="soun.mp3" type="audio/mp3" controls></audio>
+    <button id="start">Start Audio</button>
 
     <div class="slider-container">
         <label for="pitch">Pitch:</label>
@@ -32,37 +32,45 @@
         <span id="speed-value">1</span>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.38/Tone.min.js"></script>
     <script>
-        const audio = document.getElementById('audio');
-        const pitchSlider = document.getElementById('pitch');
-        const speedSlider = document.getElementById('speed');
-        const pitchValue = document.getElementById('pitch-value');
-        const speedValue = document.getElementById('speed-value');
+        let audioContext;
 
-        // Initialize Web Audio API components
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const source = audioContext.createMediaElementSource(audio);
-        const gainNode = audioContext.createGain();
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+        document.getElementById('start').addEventListener('click', () => {
+            if (!audioContext) {
+                audioContext = new Tone.Context();
+                Tone.start().then(() => {
+                    const player = new Tone.Player('soun.mp3').toDestination();
+                    const pitchShift = new Tone.PitchShift().toDestination();
+                    const playbackRateControl = new Tone.Gain().toDestination();
+                    
+                    player.connect(pitchShift);
+                    pitchShift.connect(playbackRateControl);
 
-        function updateAudio() {
-            const pitch = pitchSlider.value;
-            const speed = speedSlider.value;
+                    const pitchSlider = document.getElementById('pitch');
+                    const speedSlider = document.getElementById('speed');
+                    const pitchValue = document.getElementById('pitch-value');
+                    const speedValue = document.getElementById('speed-value');
 
-            // Adjust playbackRate (speed and pitch together)
-            audio.playbackRate = speed;
+                    function updateAudio() {
+                        const pitch = pitchSlider.value;
+                        const speed = speedSlider.value;
 
-            // Display updated values
-            pitchValue.textContent = pitch;
-            speedValue.textContent = speed;
-        }
+                        pitchShift.pitch = pitch;
+                        playbackRateControl.gain.value = speed;
 
-        pitchSlider.addEventListener('input', updateAudio);
-        speedSlider.addEventListener('input', updateAudio);
+                        pitchValue.textContent = pitch;
+                        speedValue.textContent = speed;
+                    }
 
-        // Initialize values
-        updateAudio();
+                    pitchSlider.addEventListener('input', updateAudio);
+                    speedSlider.addEventListener('input', updateAudio);
+
+                    updateAudio(); // Initialize values
+                    player.start(); // Start playback
+                });
+            }
+        });
     </script>
 </body>
 </html>
