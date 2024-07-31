@@ -8,6 +8,9 @@
         .slider-container {
             margin: 20px 0;
         }
+        .slider-container input[type="range"] {
+            width: 300px; /* Adjust the length of the sliders */
+        }
     </style>
 </head>
 <body>
@@ -43,18 +46,9 @@
             const pitch = pitchSlider.value;
             const speed = speedSlider.value;
 
-            // Change playbackRate to adjust speed
+            // Adjust playback rate (speed) and pitch
             audio.playbackRate = speed;
-
-            // Use Web Audio API for pitch adjustment
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const source = audioContext.createMediaElementSource(audio);
-            const pitchShift = audioContext.createGain();
-            source.connect(pitchShift);
-            pitchShift.connect(audioContext.destination);
-
-            // Pitch shifting logic (requires a library like tone.js for better control)
-            pitchShift.gain.value = pitch;
+            // Note: Changing pitch while keeping speed constant requires more complex processing
 
             // Update the displayed values
             pitchValue.textContent = pitch;
@@ -63,6 +57,9 @@
 
         pitchSlider.addEventListener('input', updateAudio);
         speedSlider.addEventListener('input', updateAudio);
+
+        // Initialize values
+        updateAudio();
     </script>
 </body>
 </html>
