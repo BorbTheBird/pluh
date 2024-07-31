@@ -1,7 +1,68 @@
-<h1>Pluh</h1>
-<img src="pluh.jpg" alt="Pluh" />
-<p>look at him hes so pluh</p>
-<audio controls>
-  <source src="soun.mp3" type="audio/mp3">
-  Your browser does not support the audio tag.
-</audio>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Controls</title>
+    <style>
+        .slider-container {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pluh</h1>
+    <img src="pluh.jpg" alt="Pluh" />
+    <p>Look at him, he's so pluh</p>
+
+    <audio id="audio" controls>
+        <source src="soun.mp3" type="audio/mp3">
+        Your browser does not support the audio tag.
+    </audio>
+
+    <div class="slider-container">
+        <label for="pitch">Pitch:</label>
+        <input type="range" id="pitch" min="0.5" max="2" step="0.01" value="1">
+        <span id="pitch-value">1</span>
+    </div>
+
+    <div class="slider-container">
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" min="0.5" max="2" step="0.01" value="1">
+        <span id="speed-value">1</span>
+    </div>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const pitchSlider = document.getElementById('pitch');
+        const speedSlider = document.getElementById('speed');
+        const pitchValue = document.getElementById('pitch-value');
+        const speedValue = document.getElementById('speed-value');
+
+        function updateAudio() {
+            const pitch = pitchSlider.value;
+            const speed = speedSlider.value;
+
+            // Change playbackRate to adjust speed
+            audio.playbackRate = speed;
+
+            // Use Web Audio API for pitch adjustment
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaElementSource(audio);
+            const pitchShift = audioContext.createGain();
+            source.connect(pitchShift);
+            pitchShift.connect(audioContext.destination);
+
+            // Pitch shifting logic (requires a library like tone.js for better control)
+            pitchShift.gain.value = pitch;
+
+            // Update the displayed values
+            pitchValue.textContent = pitch;
+            speedValue.textContent = speed;
+        }
+
+        pitchSlider.addEventListener('input', updateAudio);
+        speedSlider.addEventListener('input', updateAudio);
+    </script>
+</body>
+</html>
