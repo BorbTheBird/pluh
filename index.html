@@ -40,13 +40,21 @@
         let audioLoaded = false;
 
         // Ensure Tone.js context is started by user interaction
-        document.getElementById('start').addEventListener('click', () => {
-            Tone.start().then(() => {
+        document.getElementById('start').addEventListener('click', async () => {
+            try {
+                // Start Tone.js context
+                await Tone.start();
+
                 if (!audioLoaded) {
-                    // Initialize the player, pitch shift, and playback rate control
+                    // Create and load the player
                     player = new Tone.Player('soun.mp3', () => {
                         // Audio is loaded
                         audioLoaded = true;
+
+                        // Create pitch shift and playback rate nodes
+                        pitchShift = new Tone.PitchShift().toDestination();
+                        playbackRateControl = new Tone.Gain().toDestination();
+
                         player.connect(pitchShift);
                         pitchShift.connect(playbackRateControl);
 
@@ -77,16 +85,13 @@
                         // Start playback
                         player.start();
                     }).toDestination();
-
-                    pitchShift = new Tone.PitchShift().toDestination();
-                    playbackRateControl = new Tone.Gain().toDestination();
                 } else {
                     // Resume playback if already loaded
                     player.start();
                 }
-            }).catch(err => {
+            } catch (err) {
                 console.error('Error starting Tone.js:', err);
-            });
+            }
         });
     </script>
 </body>
