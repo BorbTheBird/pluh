@@ -34,19 +34,26 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.38/Tone.min.js"></script>
     <script>
-        let audioContext;
+        let player;
+        let pitchShift;
+        let playbackRateControl;
 
+        // Ensure Tone.js context is started by user interaction
         document.getElementById('start').addEventListener('click', () => {
-            if (!audioContext) {
-                audioContext = new Tone.Context();
-                Tone.start().then(() => {
-                    const player = new Tone.Player('soun.mp3').toDestination();
-                    const pitchShift = new Tone.PitchShift().toDestination();
-                    const playbackRateControl = new Tone.Gain().toDestination();
-                    
+            Tone.start().then(() => {
+                if (!player) {
+                    // Create and load the player
+                    player = new Tone.Player('soun.mp3').toDestination();
+
+                    // Create pitch shift and playback rate nodes
+                    pitchShift = new Tone.PitchShift().toDestination();
+                    playbackRateControl = new Tone.Gain().toDestination();
+
+                    // Connect nodes
                     player.connect(pitchShift);
                     pitchShift.connect(playbackRateControl);
 
+                    // Initialize sliders
                     const pitchSlider = document.getElementById('pitch');
                     const speedSlider = document.getElementById('speed');
                     const pitchValue = document.getElementById('pitch-value');
@@ -56,9 +63,11 @@
                         const pitch = pitchSlider.value;
                         const speed = speedSlider.value;
 
+                        // Update pitch and speed
                         pitchShift.pitch = pitch;
                         playbackRateControl.gain.value = speed;
 
+                        // Update displayed values
                         pitchValue.textContent = pitch;
                         speedValue.textContent = speed;
                     }
@@ -67,9 +76,13 @@
                     speedSlider.addEventListener('input', updateAudio);
 
                     updateAudio(); // Initialize values
-                    player.start(); // Start playback
-                });
-            }
+
+                    // Start playback
+                    player.start();
+                }
+            }).catch(err => {
+                console.error('Error starting Tone.js:', err);
+            });
         });
     </script>
 </body>
