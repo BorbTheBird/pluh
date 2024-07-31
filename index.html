@@ -18,10 +18,7 @@
     <img src="pluh.jpg" alt="Pluh" />
     <p>Look at him, he's so pluh</p>
 
-    <audio id="audio" controls>
-        <source src="soun.mp3" type="audio/mp3">
-        Your browser does not support the audio tag.
-    </audio>
+    <audio id="audio" src="soun.mp3" type="audio/mp3" controls></audio>
 
     <div class="slider-container">
         <label for="pitch">Pitch:</label>
@@ -42,15 +39,26 @@
         const pitchValue = document.getElementById('pitch-value');
         const speedValue = document.getElementById('speed-value');
 
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioContext.createMediaElementSource(audio);
+        const pitchShift = audioContext.createBufferSource();
+        const playbackRate = audioContext.createGain();
+        
+        source.connect(playbackRate);
+        playbackRate.connect(audioContext.destination);
+
         function updateAudio() {
             const pitch = pitchSlider.value;
             const speed = speedSlider.value;
 
-            // Adjust playback rate (speed) and pitch
-            audio.playbackRate = speed;
-            // Note: Changing pitch while keeping speed constant requires more complex processing
+            // Adjust playback rate (speed)
+            playbackRate.gain.value = speed;
 
-            // Update the displayed values
+            // Adjust pitch
+            // Note: This code only adjusts pitch relative to speed, and actual pitch shifting requires more advanced processing.
+            source.playbackRate.value = pitch;
+
+            // Update displayed values
             pitchValue.textContent = pitch;
             speedValue.textContent = speed;
         }
