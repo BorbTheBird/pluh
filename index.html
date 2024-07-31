@@ -40,60 +40,56 @@
         let audioLoaded = false;
         let audioContextStarted = false;
 
-        // Function to initialize Tone.js and audio components
-        function initializeAudio() {
-            if (!audioContextStarted) {
-                Tone.start().then(() => {
+        // Function to handle user gesture and initialize Tone.js
+        document.getElementById('start').addEventListener('click', async () => {
+            try {
+                if (!audioContextStarted) {
+                    await Tone.start();
                     audioContextStarted = true;
-                    
-                    if (!audioLoaded) {
-                        player = new Tone.Player('soun.mp3', () => {
-                            // Audio is loaded
-                            audioLoaded = true;
+                }
 
-                            // Create pitch shift and playback rate nodes
-                            pitchShift = new Tone.PitchShift().toDestination();
-                            playbackRateControl = new Tone.Gain().toDestination();
+                if (!audioLoaded) {
+                    player = new Tone.Player('soun.mp3', () => {
+                        audioLoaded = true;
 
-                            player.connect(pitchShift);
-                            pitchShift.connect(playbackRateControl);
+                        // Create pitch shift and playback rate nodes
+                        pitchShift = new Tone.PitchShift().toDestination();
+                        playbackRateControl = new Tone.Gain().toDestination();
 
-                            // Setup sliders
-                            const pitchSlider = document.getElementById('pitch');
-                            const speedSlider = document.getElementById('speed');
-                            const pitchValue = document.getElementById('pitch-value');
-                            const speedValue = document.getElementById('speed-value');
+                        player.connect(pitchShift);
+                        pitchShift.connect(playbackRateControl);
 
-                            function updateAudio() {
-                                const pitch = pitchSlider.value;
-                                const speed = speedSlider.value;
+                        // Setup sliders
+                        const pitchSlider = document.getElementById('pitch');
+                        const speedSlider = document.getElementById('speed');
+                        const pitchValue = document.getElementById('pitch-value');
+                        const speedValue = document.getElementById('speed-value');
 
-                                // Update pitch and speed
-                                pitchShift.pitch = parseFloat(pitch);
-                                playbackRateControl.gain.value = parseFloat(speed);
+                        function updateAudio() {
+                            const pitch = pitchSlider.value;
+                            const speed = speedSlider.value;
 
-                                // Update displayed values
-                                pitchValue.textContent = pitch;
-                                speedValue.textContent = speed;
-                            }
+                            // Update pitch and speed
+                            pitchShift.pitch = parseFloat(pitch);
+                            playbackRateControl.gain.value = parseFloat(speed);
 
-                            pitchSlider.addEventListener('input', updateAudio);
-                            speedSlider.addEventListener('input', updateAudio);
+                            // Update displayed values
+                            pitchValue.textContent = pitch;
+                            speedValue.textContent = speed;
+                        }
 
-                            updateAudio(); // Initialize values
-                        }).toDestination();
-                    }
-                }).catch(err => {
-                    console.error('Error starting Tone.js:', err);
-                });
-            }
-        }
+                        pitchSlider.addEventListener('input', updateAudio);
+                        speedSlider.addEventListener('input', updateAudio);
 
-        // Start audio on button click
-        document.getElementById('start').addEventListener('click', () => {
-            initializeAudio();
-            if (audioLoaded) {
+                        updateAudio(); // Initialize values
+                    }).toDestination();
+                }
+
+                // Start playback
                 player.start();
+
+            } catch (err) {
+                console.error('Error starting Tone.js:', err);
             }
         });
     </script>
