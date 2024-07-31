@@ -22,8 +22,8 @@
 
     <div class="slider-container">
         <label for="pitch">Pitch:</label>
-        <input type="range" id="pitch" min="0.5" max="2" step="0.01" value="1">
-        <span id="pitch-value">1</span>
+        <input type="range" id="pitch" min="-12" max="12" step="1" value="0">
+        <span id="pitch-value">0</span>
     </div>
 
     <div class="slider-container">
@@ -37,23 +37,23 @@
         let player;
         let pitchShift;
         let playbackRateControl;
+        let audioLoaded = false;
 
-        // Ensure Tone.js context is started by user interaction
         document.getElementById('start').addEventListener('click', () => {
             Tone.start().then(() => {
-                if (!player) {
-                    // Create and load the player
+                if (!audioLoaded) {
+                    // Initialize the player, pitch shift, and playback rate control
                     player = new Tone.Player('soun.mp3').toDestination();
-
-                    // Create pitch shift and playback rate nodes
                     pitchShift = new Tone.PitchShift().toDestination();
                     playbackRateControl = new Tone.Gain().toDestination();
 
-                    // Connect nodes
                     player.connect(pitchShift);
                     pitchShift.connect(playbackRateControl);
 
-                    // Initialize sliders
+                    // Mark audio as loaded
+                    audioLoaded = true;
+
+                    // Setup sliders
                     const pitchSlider = document.getElementById('pitch');
                     const speedSlider = document.getElementById('speed');
                     const pitchValue = document.getElementById('pitch-value');
@@ -64,8 +64,8 @@
                         const speed = speedSlider.value;
 
                         // Update pitch and speed
-                        pitchShift.pitch = pitch;
-                        playbackRateControl.gain.value = speed;
+                        pitchShift.pitch = parseFloat(pitch);
+                        playbackRateControl.gain.value = parseFloat(speed);
 
                         // Update displayed values
                         pitchValue.textContent = pitch;
@@ -78,6 +78,9 @@
                     updateAudio(); // Initialize values
 
                     // Start playback
+                    player.start();
+                } else {
+                    // Resume playback if already loaded
                     player.start();
                 }
             }).catch(err => {
