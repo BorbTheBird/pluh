@@ -35,26 +35,27 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.26/Tone.min.js"></script>
     <script>
-        const sound = new Howl({
-            src: ['soun.mp3'],
-            html5: true
-        });
+        const player = new Tone.Player("soun.mp3").toDestination();
+        const pitchShift = new Tone.PitchShift().toDestination();
+        player.connect(pitchShift);
 
         function playAudio() {
-            sound.play();
+            if (Tone.context.state !== 'running') {
+                Tone.context.resume();
+            }
+            player.start();
         }
 
         function changeSpeed() {
             const speedSlider = document.getElementById('speedSlider');
-            sound.rate(speedSlider.value);
+            player.playbackRate = speedSlider.value;
         }
 
         function changePitch() {
             const pitchSlider = document.getElementById('pitchSlider');
-            // For simplicity, we will map pitch to speed here. Advanced pitch shifting requires more processing.
-            sound.rate(pitchSlider.value);
+            pitchShift.pitch = (pitchSlider.value - 1) * 12; // Shift pitch in semitones
         }
     </script>
 </body>
