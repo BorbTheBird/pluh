@@ -33,7 +33,25 @@
     </div>
     const audioContext = new AudioContext();
     <audio src="soun.mp3"></audio>
-    
+
+<button data-playing="false" class="tape-controls-play" role="switch" aria-checked="false">
+				<span>Play/Pause</span>
+			</button>
+
+		<input type="range" id="volume" class="control-volume" min="0" max="2" value="1" list="gain-vals" step="0.01" data-action="volume" />
+			<datalist id="gain-vals">
+				<option value="0" label="min">
+				<option value="2" label="max">
+			</datalist>
+			<label for="volume">VOL</label>
+
+			<input type="range" id="panner" class="control-panner" list="pan-vals" min="-1" max="1" value="0" step="0.01" data-action="panner" />
+			<datalist id="pan-vals">
+				<option value="-1" label="left">
+				<option value="1" label="right">
+			</datalist>
+			<label for="panner">PAN</label>
+	
 <script>
 // instigate our audio context
 
@@ -95,21 +113,6 @@ pannerControl.addEventListener('input', function() {
 // connect our graph
 track.connect(gainNode).connect(panner).connect(audioCtx.destination);
 
-const powerButton = document.querySelector('.control-power');
-
-powerButton.addEventListener('click', function() {
-	if (this.dataset.power === 'on') {
-		audioCtx.suspend();
-		this.dataset.power = 'off';
-	} else if (this.dataset.power === 'off') {
-		audioCtx.resume();
-		this.dataset.power = 'on';
-	}
-	this.setAttribute( "aria-checked", state ? "false" : "true" );
-	console.log(audioCtx.state);
-}, false);
-
-// Track credit: Outfoxing the Fox by Kevin MacLeod under Creative Commons 
 <script>
 </body>
 </html>
