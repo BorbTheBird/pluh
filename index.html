@@ -35,19 +35,20 @@
         
         <div class="slider-container">
             <label for="speedSlider">Speed:</label>
-            <input type="range" id="speedSlider" min="0.5" max="2" value="1" step="0.1" class="slider" oninput="changeSpeed()">
+            <input type="range" id="speedSlider" min="0.5" max="10" value="1" step="0.1" class="slider" oninput="changeSpeed()">
             <span id="speedValue" class="slider-value">1</span>
         </div>
         
         <div class="slider-container">
             <label for="pitchSlider">Pitch:</label>
-            <input type="range" id="pitchSlider" min="-12" max="12" value="0" step="1" class="slider" oninput="changePitch()">
+            <input type="range" id="pitchSlider" min="-12" max="30" value="0" step="1" class="slider" oninput="changePitch()">
             <span id="pitchValue" class="slider-value">0</span>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.26/Tone.min.js"></script>
     <script>
+        console.clear()
         // Setup player and pitch shifter
         const player = new Tone.GrainPlayer({
             url: "soun.mp3",
@@ -81,6 +82,7 @@
             const pitchSlider = document.getElementById('pitchSlider');
             pitchShift.pitch = pitchSlider.value;
             document.getElementById('pitchValue').innerText = pitchSlider.value;
+            console.clear()
         }
     </script>
 </body>
