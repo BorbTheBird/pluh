@@ -22,7 +22,6 @@
 </head>
 <body>
     <div class="container">
-        <audio id="audio" src="soun.mp3"></audio>
         <button onclick="playAudio()">Play</button>
         
         <div class="slider">
@@ -36,36 +35,26 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <script>
-        const audio = document.getElementById('audio');
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const source = audioContext.createMediaElementSource(audio);
-        const pitchShiftNode = audioContext.createBiquadFilter();
-        
-        pitchShiftNode.type = 'allpass'; // You might want to experiment with different filter types for pitch effect
-        source.connect(pitchShiftNode);
-        pitchShiftNode.connect(audioContext.destination);
+        const sound = new Howl({
+            src: ['soun.mp3'],
+            html5: true
+        });
 
         function playAudio() {
-            if (audioContext.state === 'suspended') {
-                audioContext.resume().then(() => {
-                    audio.play();
-                });
-            } else {
-                audio.play();
-            }
+            sound.play();
         }
 
         function changeSpeed() {
             const speedSlider = document.getElementById('speedSlider');
-            audio.playbackRate = speedSlider.value;
+            sound.rate(speedSlider.value);
         }
 
         function changePitch() {
             const pitchSlider = document.getElementById('pitchSlider');
-            // Adjust the detune property for pitch shifting
-            pitchShiftNode.frequency.value = 1000; // base frequency
-            pitchShiftNode.detune.value = (pitchSlider.value - 1) * 1200; // adjust pitch in cents (semitones * 100)
+            // For simplicity, we will map pitch to speed here. Advanced pitch shifting requires more processing.
+            sound.rate(pitchSlider.value);
         }
     </script>
 </body>
