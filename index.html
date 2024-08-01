@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Player with Sliders</title>
+    <title>Pluh</title>
     <style>
         .container {
             display: flex;
@@ -42,8 +42,7 @@
         player.connect(pitchShift);
 
         function playAudio() {
-            Tone.start().then(() => {
-                player.start();
+            Tone.start()
             }).catch((e) => {
                 console.log("AudioContext start error:", e);
             });
