@@ -37,14 +37,23 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.26/Tone.min.js"></script>
     <script>
-        const grainPlayer = new Tone.GrainPlayer("soun.mp3").toDestination();
+        // Setup player and pitch shifter
+        const player = new Tone.Player({
+            url: "soun.mp3",
+            loop: true,
+            autostart: false,
+        });
+
         const pitchShift = new Tone.PitchShift().toDestination();
-        grainPlayer.connect(pitchShift);
+        player.connect(pitchShift);
+
+        let isPlaying = false;
 
         function playAudio() {
             Tone.start().then(() => {
-                if (!grainPlayer.state.includes("started")) {
-                    grainPlayer.start();
+                if (!isPlaying) {
+                    player.start();
+                    isPlaying = true;
                 }
             }).catch((e) => {
                 console.log("AudioContext start error:", e);
@@ -53,7 +62,7 @@
 
         function changeSpeed() {
             const speedSlider = document.getElementById('speedSlider');
-            grainPlayer.playbackRate = speedSlider.value;
+            player.playbackRate = speedSlider.value;
         }
 
         function changePitch() {
@@ -63,3 +72,4 @@
     </script>
 </body>
 </html>
+
