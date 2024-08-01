@@ -1,38 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Controls with Tone.js</title>
-    <style>
-        .slider-container {
-            margin: 20px 0;
-        }
-        .slider-container input[type="range"] {
-            width: 300px; /* Adjust the length of the sliders */
-        }
-    </style>
-</head>
-<body>
-    <h1>Pluh</h1>
-    <img src="pluh.jpg" alt="Pluh" />
-    <p>Look at him, he's so pluh</p>
-
-    <button id="start">Start Audio</button>
-
-    <div class="slider-container">
-        <label for="pitch">Pitch:</label>
-        <input type="range" id="pitch" min="-12" max="12" step="1" value="0">
-        <span id="pitch-value">0</span>
-    </div>
-
-    <div class="slider-container">
-        <label for="speed">Speed:</label>
-        <input type="range" id="speed" min="0.5" max="2" step="0.01" value="1">
-        <span id="speed-value">1</span>
-    </div>
-    const audioContext = new AudioContext();
-    <audio src="soun.mp3"></audio>
+<h1>Pluh</h1>
+<img src="pluh.jpg" alt="Pluh" />
+<p>Look at him, he's so pluh</p>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +22,7 @@
 </head>
 <body>
     <div class="container">
-        <audio id="audio" src="soun.mp3"></audio>
+        <audio id="audio" src="your-audio-file.mp3"></audio>
         <button onclick="playAudio()">Play</button>
         
         <div class="slider">
@@ -93,8 +61,5 @@
             pitchShiftNode.connect(audioContext.destination);
         }
     </script>
-</body>
-</html>
-
 </body>
 </html>
