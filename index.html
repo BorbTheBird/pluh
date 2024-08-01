@@ -31,88 +31,52 @@
         <input type="range" id="speed" min="0.5" max="2" step="0.01" value="1">
         <span id="speed-value">1</span>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.38/Tone.min.js"></script>
+    const audioContext = new AudioContext();
+    <audio src="myCoolTrack.mp3"></audio>
+    
     <script>
-        let player;
-        let pitchShift;
-        let playbackRateControl;
-        let audioLoaded = false;
-        let audioContextStarted = false;
-        let isPlaying = false;
+    // get the audio element
+const audioElement = document.querySelector("audio");
 
-        document.getElementById('start').addEventListener('click', async () => {
-            try {
-                // Start Tone.js AudioContext
-                if (!audioContextStarted) {
-                    await Tone.start();
-                    audioContextStarted = true;
-                }
+// pass it into the audio context
+const track = audioContext.createMediaElementSource(audioElement);
+    </script>
+    <button data-playing="false" role="switch" aria-checked="false">
+  <span>Play/Pause</span>
+</button>
 
-                // Load and setup audio player
-                if (!audioLoaded) {
-                    player = new Tone.Player({
-                        url: 'soun.mp3',
-                        autostart: false,
-                        onload: () => {
-                            audioLoaded = true;
-                            setupAudioNodes();
-                        },
-                        onerror: (err) => {
-                            console.error('Error loading audio file:', err);
-                        }
-                    }).toDestination();
-                } else {
-                    setupAudioNodes();
-                }
+    <script>
+        // Select our play button
+const playButton = document.querySelector("button");
 
-                // Start playback if not already playing
-                if (audioLoaded && !isPlaying) {
-                    player.start();
-                    isPlaying = true;
-                }
+playButton.addEventListener(
+  "click",
+  () => {
+    // Check if context is in suspended state (autoplay policy)
+    if (audioContext.state === "suspended") {
+      audioContext.resume();
+    }
 
-            } catch (err) {
-                console.error('Error starting Tone.js:', err);
-            }
-        });
+    // Play or pause track depending on state
+    if (playButton.dataset.playing === "false") {
+      audioElement.play();
+      playButton.dataset.playing = "true";
+    } else if (playButton.dataset.playing === "true") {
+      audioElement.pause();
+      playButton.dataset.playing = "false";
+    }
+  },
+  false,
+);
 
-        function setupAudioNodes() {
-            // Create pitch shift and playback rate nodes
-            if (!pitchShift) pitchShift = new Tone.PitchShift().toDestination();
-            if (!playbackRateControl) playbackRateControl = new Tone.Gain().toDestination();
+        audioElement.addEventListener(
+  "ended",
+  () => {
+    playButton.dataset.playing = "false";
+  },
+  false,
+);
 
-            // Ensure player is connected correctly
-            if (player) {
-                player.disconnect();
-                player.connect(pitchShift);
-                pitchShift.connect(playbackRateControl);
-            }
-
-            // Setup sliders
-            const pitchSlider = document.getElementById('pitch');
-            const speedSlider = document.getElementById('speed');
-            const pitchValue = document.getElementById('pitch-value');
-            const speedValue = document.getElementById('speed-value');
-
-            function updateAudio() {
-                const pitch = pitchSlider.value;
-                const speed = speedSlider.value;
-
-                // Update pitch and speed
-                if (pitchShift) pitchShift.pitch = parseFloat(pitch);
-                if (playbackRateControl) playbackRateControl.gain.value = parseFloat(speed);
-
-                // Update displayed values
-                pitchValue.textContent = pitch;
-                speedValue.textContent = speed;
-            }
-
-            pitchSlider.addEventListener('input', updateAudio);
-            speedSlider.addEventListener('input', updateAudio);
-
-            updateAudio(); // Initialize values
-        }
     </script>
 </body>
 </html>
