@@ -47,7 +47,13 @@
         pitchShiftNode.connect(audioContext.destination);
 
         function playAudio() {
-            audio.play();
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    audio.play();
+                });
+            } else {
+                audio.play();
+            }
         }
 
         function changeSpeed() {
