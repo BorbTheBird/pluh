@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pluh</title>
+    <title>Audio Player with Sliders</title>
     <style>
         .container {
             display: flex;
@@ -31,18 +31,21 @@
         
         <div class="slider">
             <label for="pitchSlider">Pitch:</label>
-            <input type="range" id="pitchSlider" min="0.5" max="2" value="1" step="0.1" oninput="changePitch()">
+            <input type="range" id="pitchSlider" min="-12" max="12" value="0" step="1" oninput="changePitch()">
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.26/Tone.min.js"></script>
     <script>
-        const player = new Tone.Player("soun.mp3").toDestination();
+        const grainPlayer = new Tone.GrainPlayer("your-audio-file.mp3").toDestination();
         const pitchShift = new Tone.PitchShift().toDestination();
-        player.connect(pitchShift);
+        grainPlayer.connect(pitchShift);
 
         function playAudio() {
-            Tone.start()
+            Tone.start().then(() => {
+                if (!grainPlayer.state.includes("started")) {
+                    grainPlayer.start();
+                }
             }).catch((e) => {
                 console.log("AudioContext start error:", e);
             });
@@ -50,13 +53,12 @@
 
         function changeSpeed() {
             const speedSlider = document.getElementById('speedSlider');
-            player.playbackRate = speedSlider.value;
+            grainPlayer.playbackRate = speedSlider.value;
         }
 
         function changePitch() {
             const pitchSlider = document.getElementById('pitchSlider');
-            // Adjust the pitch in semitones
-            pitchShift.pitch = (pitchSlider.value - 1) * 12;
+            pitchShift.pitch = pitchSlider.value;
         }
     </script>
 </body>
